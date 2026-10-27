@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>袁帅｜算法工程师 · OCR 与文档智能</title>
+  <meta name="description" content="袁帅的个人主页：算法工程师，专注 OCR、文档解析与智能文档纠错。">
+  <meta name="author" content="袁帅">
+  <meta property="og:title" content="袁帅｜算法工程师 · OCR 与文档智能">
+  <meta property="og:description" content="算法工程师，专注 OCR、文档解析与智能文档纠错。">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#f7f8fa">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='43' font-size='30' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3EY%3C/text%3E%3C/svg%3E">
+  <script>
+    document.documentElement.classList.add("js");
+    try {
+      var saved = localStorage.getItem("theme");
+      if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    } catch (e) {}
+  </script>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --surface-2: #eff3f8;
+      --text: #111827;
+      --muted: #5b6577;
+      --line: #e2e8f0;
+      --accent: #2563eb;
+      --accent-2: #0891b2;
+      --accent-soft: #e8f0ff;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --radius: 20px;
+      --max: 1080px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f14;
+      --surface: #121821;
+      --surface-2: #0f151d;
+      --text: #e8eef7;
+      --muted: #9aa7b8;
+      --line: #243041;
+      --accent: #60a5fa;
+      --accent-2: #22d3ee;
+      --accent-soft: #13233c;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+      --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 88px;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(760px 420px at 12% -8%, rgba(37, 99, 235, 0.12), transparent 62%),
+        radial-gradient(680px 400px at 92% 2%, rgba(8, 145, 178, 0.10), transparent 62%);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      font: 16px/1.75 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    [data-theme="dark"] body {
+      background-image:
+        radial-gradient(760px 420px at 12% -8%, rgba(96, 165, 250, 0.12), transparent 62%),
+        radial-gradient(680px 400px at 92% 2%, rgba(34, 211, 238, 0.08), transparent 62%);
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .skip {
+      position: absolute;
+      left: -9999px;
+      top: 12px;
+      z-index: 100;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .skip:focus { left: 12px; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid transparent;
+      background: var(--bg);
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 68px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      font-size: 14px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .icon-btn svg { width: 18px; height: 18px; }
+    [data-theme="light"] .icon-sun { display: none; }
+    [data-theme="dark"] .icon-moon { display: none; }
+
+    .hero {
+      padding: clamp(64px, 10vw, 112px) 0 clamp(48px, 7vw, 76px);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: clamp(32px, 6vw, 72px);
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 750;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+      font-weight: 800;
+    }
+
+    h1 .en {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 19px);
+      line-height: 1.2;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .role {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: clamp(17px, 2.4vw, 21px);
+      font-weight: 600;
+    }
+
+    .role .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .lead {
+      max-width: 610px;
+      margin: 0 0 30px;
+      color: var(--muted);
+      font-size: 16.5px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 0 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      background: var(--surface);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--accent);
+    }
+
+    .btn.primary {
+      border-color: transparent;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    .btn svg { width: 17px; height: 17px; }
+
+    .avatar-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 280px;
+    }
+
+    .avatar-wrap::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(8, 145, 178, 0.06));
+      filter: blur(2px);
+      transform: scale(1.18);
+    }
+
+    .avatar {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 210px;
+      height: 210px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background:
+        linear-gradient(145deg, var(--surface), var(--surface-2));
+      box-shadow: var(--shadow);
+    }
+
+    .avatar-inner {
+      display: grid;
+      place-items: center;
+      width: 174px;
+      height: 174px;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(145deg, var(--accent), var(--accent-2));
+      font-size: 64px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      user-select: none;
+    }
+
+    .avatar-photo {
+      display: block;
+      width: 174px;
+      height: 174px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 28%;
+    }
+
+    .chip {
+      position: absolute;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .chip.a { top: 14px; right: 0; }
+    .chip.b { bottom: 22px; left: 0; }
+    .chip.c { top: 52%; right: -8px; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: clamp(44px, 7vw, 68px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--line);
+    }
+
+    .stat {
+      padding: 22px 24px;
+      background: var(--surface);
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 24px;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    section { padding: clamp(56px, 8vw, 84px) 0; }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 34px;
+    }
+
+    .section-no {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(26px, 3.6vw, 34px);
+      line-height: 1.2;
+      letter-spacing: -0.035em;
+    }
+
+    .section-note {
+      margin: -18px 0 30px;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 48px;
+      align-items: start;
+    }
+
+    .about-grid p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .about-grid p:first-child {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 550;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .skill-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+      box-shadow: var(--shadow-sm);
+    }
+
+    .skill-card h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: var(--surface-2);
+      font-size: 12.5px;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    .projects {
+      display: grid;
+      gap: 18px;
+    }
+
+    .project {
+      padding: clamp(22px, 3.2vw, 32px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+      box-shadow: var(--shadow);
+    }
+
+    .project.featured {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project.featured::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+
+    .project-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .project h3 {
+      margin: 0;
+      font-size: clamp(18px, 2.4vw, 22px);
+      letter-spacing: -0.025em;
+    }
+
+    .project-sub {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      border-radius: 999px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      font-size: 11.5px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .project-desc {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .bullets {
+      margin: 0 0 16px;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    .bullets li {
+      position: relative;
+      margin: 6px 0;
+      padding-left: 18px;
+    }
+
+    .bullets li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .project-grid .project { height: 100%; }
+
+    .project-link {
+      margin: 14px 0 0;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .project-link a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .project-link a:hover { text-decoration: underline; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+    }
+
+    .info-card {
+      padding: clamp(22px, 3.2vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .info-card h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .info-meta {
+      margin: 0 0 16px;
+      color: var(--accent);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 18px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 18px;
+      border-left: 2px solid var(--line);
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      top: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .timeline-item h4 {
+      margin: 0 0 2px;
+      font-size: 15px;
+    }
+
+    .timeline-item p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .award-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .award-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .award-list li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .award-list strong {
+      flex: 0 0 auto;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .contact-card {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      align-items: center;
+      padding: clamp(28px, 5vw, 48px);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background:
+        linear-gradient(135deg, var(--surface), var(--surface-2));
+      box-shadow: var(--shadow-sm);
+    }
+
+    .contact-card::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -110px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .contact-card h2 { margin-bottom: 10px; }
+
+    .contact-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .contact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    footer {
+      padding: 28px 0 40px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .footer-inner a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .footer-inner a:hover { color: var(--accent); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 90;
+      padding: 10px 16px;
+      border-radius: 10px;
+      color: #fff;
+      background: #111827;
+      box-shadow: var(--shadow);
+      font-size: 13.5px;
+      opacity: 0;
+      transform: translate(-50%, 12px);
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    html.js .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    html.js .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .avatar-wrap { order: -1; min-height: 230px; }
+      .avatar { width: 176px; height: 176px; }
+      .avatar-inner { width: 146px; height: 146px; font-size: 52px; }
+      .avatar-photo { width: 146px; height: 146px; }
+      .avatar-wrap::before { width: 210px; height: 210px; }
+      .about-grid { grid-template-columns: 1fr; gap: 10px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .contact-card { grid-template-columns: 1fr; }
+      .contact-actions { justify-content: flex-start; }
+    }
+
+    @media (max-width: 680px) {
+      .nav-links a:not(.icon-btn) { display: none; }
+      .stats { grid-template-columns: 1fr; }
+      .skills-grid, .project-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .chip.a, .chip.b, .chip.c { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      html.js .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主要内容</a>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="回到顶部">
+        <span class="brand-mark">YS</span>
+        <span>袁帅</span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="#about">关于</a>
+        <a href="#skills">技能</a>
+        <a href="#projects">项目</a>
+        <a href="#experience">经历</a>
+        <a href="#contact">联系</a>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="切换深色模式" aria-pressed="false">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">Algorithm Engineer · Document AI</p>
+            <h1>
+              袁帅
+              <span class="en">Yuanshuai</span>
+            </h1>
+            <p class="role">
+              算法工程师
+              <span class="dot" aria-hidden="true"></span>
+              OCR
+              <span class="dot" aria-hidden="true"></span>
+              文档智能
+            </p>
+            <p class="lead">
+              20 岁，软件工程本科在读，现在法狗狗（深圳）做 OCR 工程师。负责智能文档纠错
+              与文档解析服务，把合同、公文、扫描件变成可检索、可比对的结构化数据。
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="#projects">
+                查看项目
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </a>
+              <a class="btn" href="https://github.com/Yuanshuai" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.1 18.3 4.4 18.3 4.4c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"></path>
+                </svg>
+                GitHub
+              </a>
+              <a class="btn" href="./resume.pdf" download>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path>
+                </svg>
+                下载简历
+              </a>
+            </div>
+          </div>
+
+          <div class="avatar-wrap" aria-hidden="true">
+            <div class="avatar">
+              <img class="avatar-photo" src="./avatar.png" alt="袁帅">
+            </div>
+            <span class="chip a">OCR</span>
+            <span class="chip b">Python</span>
+            <span class="chip c">CV</span>
+          </div>
+        </div>
+
+        <div class="stats reveal">
+          <div class="stat">
+            <strong>6/6</strong>
+            <span>合同植入错字全部命中</span>
+          </div>
+          <div class="stat">
+            <strong>19–26s</strong>
+            <span>13,276 字合同整篇处理</span>
+          </div>
+          <div class="stat">
+            <strong>60–80%</strong>
+            <span>万字文档真实错误检出</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-no">01</span>
+          <h2>关于我</h2>
+        </div>
+        <div class="about-grid reveal">
+          <div>
+            <p>把文档变成可用数据，是我现在做的事。</p>
+            <p>
+              我在法狗狗（深圳）科技有限公司担任 OCR 工程师，参与智能文档纠错 Agent
+              和文档解析服务。前者面向合同、公文做错字检测与修正，后者把图片、PDF、
+              Office 转成带坐标的文本与表格。
+            </p>
+          </div>
+          <div>
+            <p>
+              技术栈以 Python、PaddleOCR、FastAPI / Flask、ONNX Runtime 和 OpenCV 为主，
+              也做 LangChain 工具调用、PDF 结构化、Docker Compose 编排与离线部署。
+            </p>
+            <p>
+              桂林信息科技学院软件工程本科，2022–2027。正在寻找算法工程、OCR 或
+              文档智能方向的机会，工作地点深圳。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-no">02</span>
+          <h2>技能栈</h2>
+        </div>
+        <p class="section-note">以实际项目使用为准，不追求罗列关键词。</p>
+        <div class="skills-grid reveal">
+          <article class="skill-card">
+            <h3>语言与后端</h3>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">Flask</span>
+              <span class="tag">Gunicorn</span>
+              <span class="tag">LangChain</span>
+              <span class="tag">MySQL</span>
+            </div>
+          </article>
+          <article class="skill-card">
+            <h3>OCR 与视觉</h3>
+            <div class="tags">
+              <span class="tag">PaddleOCR</span>
+              <span class="tag">PP-OCRv6</span>
+              <span class="tag">PP-DocLayoutV2</span>
+              <span class="tag">RT-DETR</span>
+              <span class="tag">YOLO11</span>
+              <span class="tag">OpenCV</span>
+              <span class="tag">ONNX Runtime</span>
+              <span class="tag">TensorRT</span>
+            </div>
+          </article>
+          <article class="skill-card">
+            <h3>文档与前端</h3>
+            <div class="tags">
+              <span class="tag">PyMuPDF</span>
+              <span class="tag">PDF.js</span>
+              <span class="tag">Vue3</span>
+              <span class="tag">MinIO</span>
+              <span class="tag">Gotenberg</span>
+              <span class="tag">表格识别</span>
+            </div>
+          </article>
+          <article class="skill-card">
+            <h3>工程与部署</h3>
+            <div class="tags">
+              <span class="tag">Docker Compose</span>
+              <span class="tag">多架构镜像</span>
+              <span class="tag">离线部署</span>
+              <span class="tag">Linux</span>
+              <span class="tag">Git</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-no">03</span>
+          <h2>项目案例</h2>
+        </div>
+        <p class="section-note">以下为参与过的算法、文档智能与工程化项目。</p>
+
+        <div class="projects reveal">
+          <article class="project featured">
+            <div class="project-head">
+              <div>
+                <p class="project-sub">Intelligent Proofreading · 项目负责人</p>
+                <h3>智能文档纠错服务</h3>
+              </div>
+              <span class="badge">2026.07–2026.08</span>
+            </div>
+            <p class="project-desc">
+              面向合同、公文的 AI 错字纠错系统，支持 PDF、Word、Excel 和纯文本，
+              输出保持原版式的结果页。
+            </p>
+            <ul class="bullets">
+              <li>架构：模型直接改文件，服务端 diff 定位变更；自研工具调用与覆盖率校验，六类错别字门禁。</li>
+              <li>表格按单元格 R1C1 寻址，修改后仍能准确回填到原位置。</li>
+              <li>技术栈：FastAPI + Gunicorn、LangChain + OpenAI 兼容网关（Qwen）、PyMuPDF、Vue3 + Vite + PDF.js、MySQL、MinIO、Gotenberg。</li>
+              <li>交付：五容器编排、多架构镜像、离线一键部署。</li>
+              <li>业绩：6,927 字合同植入 6 处错字全部命中，21 秒完成，覆盖率 100%，条款措辞零误改；13,276 字合同整篇 19–26 秒。</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">LangChain</span>
+              <span class="tag">Qwen</span>
+              <span class="tag">PyMuPDF</span>
+              <span class="tag">Vue3</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">Docker Compose</span>
+            </div>
+          </article>
+
+          <div class="project-grid">
+            <article class="project">
+              <div class="project-head">
+                <div>
+                  <p class="project-sub">Document Parsing · 技术开发</p>
+                  <h3>文档解析服务</h3>
+                </div>
+              </div>
+              <p class="project-desc">
+                基于 Flask 的 OCR 服务，把图片、PDF、Office 转成带坐标的文本和表格。
+              </p>
+              <ul class="bullets">
+                <li>PaddleOCR PP-OCRv6 + PP-DocLayoutV2 + RT-DETR + YOLO11 + ONNX Runtime。</li>
+                <li>多页投票去水印、红章去除、方向矫正、表格单元格识别。</li>
+                <li>输出字符级坐标和结构化表格，支持模型懒加载、版面缓存与 GPU 锁。</li>
+              </ul>
+              <div class="tags">
+                <span class="tag">Flask</span>
+                <span class="tag">PaddleOCR</span>
+                <span class="tag">PP-DocLayoutV2</span>
+                <span class="tag">RT-DETR</span>
+                <span class="tag">YOLO11</span>
+                <span class="tag">ONNX Runtime</span>
+              </div>
+              <p class="project-link">
+                <a href="https://github.com/Yuanshuai/ocr" target="_blank" rel="noopener">查看代码仓库 →</a>
+              </p>
+            </article>
+
+            <article class="project">
+              <div class="project-head">
+                <div>
+                  <p class="project-sub">Archive System · Python</p>
+                  <h3>档案管理系统</h3>
+                </div>
+              </div>
+              <p class="project-desc">
+                档案管理系统中的 Python 后端 OCR 服务，接收图像或 PDF，返回提取到的表格信息。
+              </p>
+              <ul class="bullets">
+                <li>将 PaddleOCR 的 .paddle 模型转为 ONNX，使用 onnxruntime 推理。</li>
+                <li>OpenCV 预处理：方向判断与转正、红色印章消除、图像二值化。</li>
+                <li>通过预处理提升 OCR 准确度，返回表格结构给业务系统。</li>
+              </ul>
+              <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">PaddleOCR</span>
+                <span class="tag">ONNX Runtime</span>
+                <span class="tag">OpenCV</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-no">04</span>
+          <h2>经历与教育</h2>
+        </div>
+        <div class="info-grid reveal">
+          <article class="info-card">
+            <h3>法狗狗（深圳）科技有限公司</h3>
+            <p class="info-meta">OCR 工程师 · 2026.01–至今</p>
+            <div class="timeline">
+              <div class="timeline-item">
+                <h4>文档纠错 Agent</h4>
+                <p>27B 小模型，万字级文档几分钟检出 60%–80% 真实错误。</p>
+              </div>
+              <div class="timeline-item">
+                <h4>文档解析</h4>
+                <p>OCR、表格、水印、红章、方向判断、图像质量增强。</p>
+              </div>
+            </div>
+          </article>
+          <article class="info-card">
+            <h3>桂林信息科技学院</h3>
+            <p class="info-meta">软件工程 · 本科 · 2022–2027</p>
+            <ul class="award-list">
+              <li><strong>竞赛</strong>蓝桥杯 C/C++ 省二</li>
+              <li><strong>体育</strong>校级乒乓球团体赛冠军</li>
+              <li><strong>体育</strong>校乒乓球冠军</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap">
+        <div class="contact-card reveal">
+          <div>
+            <p class="eyebrow">Get in touch</p>
+            <h2>聊聊机会或项目</h2>
+            <p>如果你正在找算法工程、OCR 或文档智能方向的人，欢迎直接联系我。</p>
+          </div>
+          <div class="contact-actions">
+            <a class="btn primary" href="mailto:2518125676@qq.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                <path d="m3 7 9 6 9-6"></path>
+              </svg>
+              发邮件
+            </a>
+            <a class="btn" href="./resume.pdf" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path>
+              </svg>
+              下载简历
+            </a>
+            <a class="btn" href="https://github.com/Yuanshuai" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.1 18.3 4.4 18.3 4.4c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"></path>
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year">2026</span> 袁帅 · 算法工程师 · 深圳</span>
+      <a href="#top">回到顶部 ↑</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var toggle = document.getElementById("theme-toggle");
+      var toast = document.getElementById("toast");
+      var toastTimer = null;
+
+      function syncThemeButton() {
+        var isDark = root.dataset.theme === "dark";
+        toggle.setAttribute("aria-pressed", String(isDark));
+        toggle.setAttribute("aria-label", isDark ? "切换浅色模式" : "切换深色模式");
+      }
+
+      syncThemeButton();
+
+      toggle.addEventListener("click", function () {
+        var next = root.dataset.theme === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        try { localStorage.setItem("theme", next); } catch (e) {}
+        syncThemeButton();
+      });
+
+      document.getElementById("year").textContent = String(new Date().getFullYear());
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () {
+          toast.classList.remove("show");
+        }, 1800);
+      }
+
+      var copyButton = document.getElementById("copy-email");
+      if (copyButton) {
+        copyButton.addEventListener("click", function () {
+          var email = copyButton.dataset.email;
+          function done() { showToast("邮箱已复制：" + email); }
+          function fallback() {
+            var input = document.createElement("textarea");
+            input.value = email;
+            input.setAttribute("readonly", "");
+            input.style.position = "fixed";
+            input.style.opacity = "0";
+            document.body.appendChild(input);
+            input.select();
+            try { document.execCommand("copy"); done(); } catch (e) { showToast("请手动复制：" + email); }
+            document.body.removeChild(input);
+          }
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(email).then(done).catch(fallback);
+          } else {
+            fallback();
+          }
+        });
+      }
+
+      var reveals = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        reveals.forEach(function (item) { observer.observe(item); });
+      } else {
+        reveals.forEach(function (item) { item.classList.add("in"); });
+      }
+    })();
+  </script>
+</body>
+</html>
