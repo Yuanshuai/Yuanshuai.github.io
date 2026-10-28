@@ -4,6 +4,9 @@
 
 线上地址：https://yuanshuai.github.io
 
+项目展示中的三个项目无公开线上演示，源码统一见
+https://github.com/Yuanshuai/shuai 。
+
 ## 技术说明
 
 - 纯静态 HTML / CSS / JavaScript，无构建步骤、无外部 CDN 依赖
