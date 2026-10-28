@@ -414,6 +414,20 @@
       font-size: 14.5px;
     }
 
+    .section-source {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    .section-source a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    .section-source a:hover { text-decoration: underline; }
+
     .about-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -615,6 +629,22 @@
       color: var(--accent);
       font-size: 12.5px;
       font-weight: 700;
+    }
+
+    .info-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .info-head h3 { margin: 0; }
+
+    .info-note {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
     .timeline {
@@ -1053,9 +1083,6 @@
                 <span class="tag">YOLO11</span>
                 <span class="tag">ONNX Runtime</span>
               </div>
-              <p class="project-link">
-                <a href="https://github.com/Yuanshuai/ocr" target="_blank" rel="noopener">查看代码仓库 →</a>
-              </p>
             </article>
 
             <article class="project">
@@ -1082,6 +1109,10 @@
             </article>
           </div>
         </div>
+        <p class="section-source">
+          三个项目均无公开线上演示，源码统一整理在
+          <a href="https://github.com/Yuanshuai/shuai" target="_blank" rel="noopener">shuai 仓库</a>。
+        </p>
       </div>
     </section>
 
@@ -1093,8 +1124,12 @@
         </div>
         <div class="info-grid reveal">
           <article class="info-card">
-            <h3>法狗狗（深圳）科技有限公司</h3>
-            <p class="info-meta">OCR 工程师 · 2026.01–至今</p>
+            <div class="info-head">
+              <h3>法狗狗（深圳）科技有限公司</h3>
+              <span class="badge">近 10 个月</span>
+            </div>
+            <p class="info-meta">OCR 工程师 · 2026.01–至今 · 含数月远程</p>
+            <p class="info-note">持续实习近 10 个月，其中数月远程协作，负责文档纠错与文档解析两条线。</p>
             <div class="timeline">
               <div class="timeline-item">
                 <h4>文档纠错 Agent</h4>
