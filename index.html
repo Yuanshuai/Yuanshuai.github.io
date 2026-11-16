@@ -1056,11 +1056,11 @@
               输出保持原版式的结果页。
             </p>
             <ul class="bullets">
-              <li>架构：模型直接改文件，服务端 diff 定位变更；自研工具调用与覆盖率校验，六类错别字门禁。</li>
-              <li>表格按单元格 R1C1 寻址，修改后仍能准确回填到原位置。</li>
-              <li>技术栈：FastAPI + Gunicorn、LangChain + OpenAI 兼容网关（Qwen）、PyMuPDF、Vue3 + Vite + PDF.js、MySQL、MinIO、Gotenberg。</li>
-              <li>交付：五容器编排、多架构镜像、离线一键部署。</li>
-              <li>业绩：6,927 字合同植入 6 处错字全部命中，21 秒完成，覆盖率 100%，条款措辞零误改；13,276 字合同整篇 19–26 秒。</li>
+              <li>面向合同 / 公文的智能文档纠错系统，支持 PDF / Word / Excel / PPT / 纯文本，输出保持原件版式的纠错报告。</li>
+              <li>长文档 Agent：按句末切 3000 字分片、10 路并发；read_text / find_text / finish 工具自主阅读，单轮读取预算 4000 字；finish 校验覆盖率并回灌漏读区间。</li>
+              <li>误改抑制：六类字级规则门 + 原文与修改稿逐字符 diff + 覆盖率门；改动必须可解释、可定位，否则回灌重试；支持表格单元格级纠错与合并单元格还原。</li>
+              <li>并行 PDF 解析：页级并行，跨页页眉 / 表号全局合并，块按坐标与阅读顺序重排；并行度按 CPU 核数限制在 8 进程；75 页 7.1 万字从 60 分钟+ 降到 60 秒内。</li>
+              <li>业绩：6,927 字合同 6 处错字全部命中，21.2 秒完成，覆盖率 100%；13,276 字合同 19–26 秒。</li>
             </ul>
             <div class="tags">
               <span class="tag">Python</span>
@@ -1090,9 +1090,10 @@
                 基于 Flask 的 OCR 服务，把图片、PDF、Office 转成带坐标的文本和表格。
               </p>
               <ul class="bullets">
-                <li>PaddleOCR PP-OCRv6 + PP-DocLayoutV2 + RT-DETR + YOLO11 + ONNX Runtime。</li>
-                <li>多页投票去水印、红章去除、方向矫正、表格单元格识别。</li>
-                <li>输出字符级坐标和结构化表格，支持模型懒加载、版面缓存与 GPU 锁。</li>
+                <li>企业级文档 OCR：图片 / PDF / Office、页码范围、扫描件 / 拍照件自适应，输出文字坐标、置信度、表格结构与印章信息。</li>
+                <li>图像预处理：多页投票 + 背景归一化 / OTSU 分离水印，仅删除跨页一致且属于背景暗部的像素；YOLO11 定位红章，R 通道阈值 + 暗红分位保护，避免误伤正文。</li>
+                <li>识别链路：PP-OCRv6 + PP-DocLayoutV2 + RT-DETR，完成文字 / 表格识别与坐标回填；模型懒加载、缓存、GPU 推理锁。</li>
+                <li>部署：MinIO / S3、Docker 离线部署、UVDoc 透视矫正、页眉页脚 / 页码过滤。</li>
               </ul>
               <div class="tags">
                 <span class="tag">Flask</span>
@@ -1119,9 +1120,9 @@
                 档案管理系统中的 Python 后端 OCR 服务，接收图像或 PDF，返回提取到的表格信息。
               </p>
               <ul class="bullets">
-                <li>将 PaddleOCR 的 .paddle 模型转为 ONNX，使用 onnxruntime 推理。</li>
-                <li>OpenCV 预处理：方向判断与转正、红色印章消除、图像二值化。</li>
-                <li>通过预处理提升 OCR 准确度，返回表格结构给业务系统。</li>
+                <li>档案管理 OCR 后端：接收图像 / PDF，返回结构化表格信息。</li>
+                <li>PaddleOCR 模型转 ONNX，统一 ONNX Runtime CPU / GPU 推理，减少 Paddle 运行时依赖；转换后做同测试集精度回归。</li>
+                <li>OpenCV 预处理：方向矫正、红章去除、OTSU 二值化，提升 OCR 准确率。</li>
               </ul>
               <div class="tags">
                 <span class="tag">Python</span>
