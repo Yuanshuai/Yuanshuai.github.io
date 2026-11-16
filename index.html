@@ -452,6 +452,12 @@
       gap: 16px;
     }
 
+    .production-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
     .skill-card {
       padding: 22px;
       border: 1px solid var(--line);
@@ -470,6 +476,13 @@
       margin: 0 0 12px;
       font-size: 15px;
       letter-spacing: -0.01em;
+    }
+
+    .skill-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.7;
     }
 
     .tags {
@@ -813,6 +826,7 @@
       .avatar-wrap::before { width: 210px; height: 210px; }
       .about-grid { grid-template-columns: 1fr; gap: 10px; }
       .info-grid { grid-template-columns: 1fr; }
+      .production-grid { grid-template-columns: 1fr; }
       .contact-card { grid-template-columns: 1fr; }
       .contact-actions { justify-content: flex-start; }
     }
@@ -848,6 +862,7 @@
         <a href="#about">关于</a>
         <a href="#skills">技能</a>
         <a href="#projects">项目</a>
+        <a href="#production">生产</a>
         <a href="#experience">经历</a>
         <a href="#contact">联系</a>
         <button class="icon-btn" id="theme-toggle" type="button" aria-label="切换深色模式" aria-pressed="false">
@@ -868,21 +883,21 @@
       <div class="wrap">
         <div class="hero-grid">
           <div>
-            <p class="eyebrow">Algorithm Engineer · Document AI</p>
+            <p class="eyebrow">Document AI · AI Application</p>
             <h1>
               袁帅
               <span class="en">Yuanshuai</span>
             </h1>
             <p class="role">
-              算法工程师
+              文档智能
+              <span class="dot" aria-hidden="true"></span>
+              AI 应用开发
               <span class="dot" aria-hidden="true"></span>
               OCR
-              <span class="dot" aria-hidden="true"></span>
-              文档智能
             </p>
             <p class="lead">
-              20 岁，软件工程本科在读，2026.01–2026.10 在法狗狗（深圳）做 OCR 工程师。
-              负责智能文档纠错与文档解析服务，把合同、公文、扫描件变成可检索、可比对的结构化数据。
+              软件工程本科在读，面向文档智能 / AI 应用开发方向。专注智能文档纠错、OCR
+              与文档解析，把合同、公文、扫描件变成可检索、可比对的结构化数据。
             </p>
             <div class="actions">
               <a class="btn primary" href="#projects">
@@ -918,16 +933,16 @@
 
         <div class="stats reveal">
           <div class="stat">
+            <strong>3</strong>
+            <span>已上线生产项目</span>
+          </div>
+          <div class="stat">
             <strong>6/6</strong>
             <span>合同植入错字全部命中</span>
           </div>
           <div class="stat">
-            <strong>19–26s</strong>
-            <span>13,276 字合同整篇处理</span>
-          </div>
-          <div class="stat">
-            <strong>60–80%</strong>
-            <span>万字文档真实错误检出</span>
+            <strong>2.0s→0.5s</strong>
+            <span>75 页 PDF 解析耗时</span>
           </div>
         </div>
       </div>
@@ -1031,10 +1046,10 @@
           <article class="project featured">
             <div class="project-head">
               <div>
-                <p class="project-sub">Intelligent Proofreading · 项目负责人</p>
+                <p class="project-sub">Intelligent Proofreading · 项目负责人 · 2026.07–2026.08</p>
                 <h3>智能文档纠错服务</h3>
               </div>
-              <span class="badge">2026.07–2026.08</span>
+              <span class="badge">已上线生产</span>
             </div>
             <p class="project-desc">
               面向合同、公文的 AI 错字纠错系统，支持 PDF、Word、Excel 和纯文本，
@@ -1057,15 +1072,19 @@
               <span class="tag">MySQL</span>
               <span class="tag">Docker Compose</span>
             </div>
+            <p class="project-link">
+              <a href="https://github.com/Yuanshuai/text-correction" target="_blank" rel="noopener">源码地址 →</a>
+            </p>
           </article>
 
           <div class="project-grid">
             <article class="project">
               <div class="project-head">
                 <div>
-                  <p class="project-sub">Document Parsing · 技术开发</p>
+                  <p class="project-sub">Document Parsing · 技术开发 · 2026.07–2026.08</p>
                   <h3>文档解析服务</h3>
                 </div>
+                <span class="badge">已上线生产</span>
               </div>
               <p class="project-desc">
                 基于 Flask 的 OCR 服务，把图片、PDF、Office 转成带坐标的文本和表格。
@@ -1083,14 +1102,18 @@
                 <span class="tag">YOLO11</span>
                 <span class="tag">ONNX Runtime</span>
               </div>
+              <p class="project-link">
+                <a href="https://github.com/Yuanshuai/document-ocr-service" target="_blank" rel="noopener">源码地址 →</a>
+              </p>
             </article>
 
             <article class="project">
               <div class="project-head">
                 <div>
-                  <p class="project-sub">Archive System · Python</p>
+                  <p class="project-sub">Archive System · Python · 2024.08–2025.05</p>
                   <h3>档案管理系统</h3>
                 </div>
+                <span class="badge">已上线生产</span>
               </div>
               <p class="project-desc">
                 档案管理系统中的 Python 后端 OCR 服务，接收图像或 PDF，返回提取到的表格信息。
@@ -1106,22 +1129,43 @@
                 <span class="tag">ONNX Runtime</span>
                 <span class="tag">OpenCV</span>
               </div>
+              <p class="project-link">
+                <a href="https://github.com/Yuanshuai/shuai" target="_blank" rel="noopener">源码地址 →</a>
+              </p>
             </article>
           </div>
         </div>
-        <p class="section-source">
-          文档解析服务已公开源码：
-          <a href="https://github.com/Yuanshuai/document-ocr-service" target="_blank" rel="noopener">document-ocr-service</a>；
-          智能文档纠错与档案管理源码见
-          <a href="https://github.com/Yuanshuai/shuai" target="_blank" rel="noopener">shuai 仓库</a>。
-        </p>
+      </div>
+    </section>
+
+    <section id="production">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-no">04</span>
+          <h2>生产实践</h2>
+        </div>
+        <p class="section-note">不是 Demo：三个项目均已上线，经历真实数据、真实版式和真实交付。</p>
+        <div class="production-grid reveal">
+          <article class="skill-card">
+            <h3>真实业务场景</h3>
+            <p>合同 / 公文纠错、文档 OCR、档案管理，覆盖扫描件、拍照件、表格与印章等复杂版式。</p>
+          </article>
+          <article class="skill-card">
+            <h3>工程化交付</h3>
+            <p>日志与调试留痕、回归测试、失败回退、Docker Compose 多容器编排、多架构镜像与离线部署。</p>
+          </article>
+          <article class="skill-card">
+            <h3>技术取舍</h3>
+            <p>在准确率、延迟与成本之间选择 27B 模型 + 分片工具调用；用差异定位替代模型自报坐标；ONNX 推理降低部署依赖。</p>
+          </article>
+        </div>
       </div>
     </section>
 
     <section id="experience">
       <div class="wrap">
         <div class="section-head">
-          <span class="section-no">04</span>
+          <span class="section-no">05</span>
           <h2>经历与教育</h2>
         </div>
         <div class="info-grid reveal">
